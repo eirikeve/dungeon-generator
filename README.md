@@ -1,4 +1,4 @@
-# dungeon_generator
+# dungeon-generator
 Generates dungeons with connected rooms.  
 Rooms are connected by paths, using a modified Prim's algorithm which expands the MST to the room closest to a room in the MST.  
 Paths are drawn by splitting them into two straight parts, which are easier to draw.
