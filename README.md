@@ -6,7 +6,7 @@ Paths are drawn by splitting them into two straight parts, which are easier to d
 Written in Python 3.
 
 # Usage
-Run in a terminal using `python dungeon.py height width [room density 0 < float < 1] [random seed int]`.  
+Run in a terminal using `python dungeon.py [-h] --height HEIGHT --width WIDTH [--density DENSITY] [--seed SEED | --random]`.  
 Density is represents the total area of placed rooms, as a fraction of the area of the dungeon array.  
 Density defaults to 0.25, and seed defaults to 0.  
 Rooms can overlap.
@@ -26,7 +26,7 @@ Whitespace == Room/path
 
 Only dimensions supplied:
 ```bash
-me@my-computer:~/Folder$ python dungeon.py 25 25
+me@my-computer:~/Folder$ python dungeon.py --height 25 --width 25
 **************************************************
 ****************[][][][][]********[][][][][]******
 ****************[]      [][][][]**[]      []******
@@ -56,7 +56,7 @@ me@my-computer:~/Folder$ python dungeon.py 25 25
 
 Dimensions and density supplied:
 ```bash
-me@my-computer:~/Folder$ python dungeon.py 25 25 0.15
+me@my-computer:~/Folder$ python dungeon.py --height 25 --width 25 --density 0.25
 **************************************************
 ****************[][][][][]************************
 ****************[]      [][][][]******************
@@ -85,7 +85,7 @@ me@my-computer:~/Folder$ python dungeon.py 25 25 0.15
 ```
 Dimensions, density, and seed supplied:
 ```bash
-me@my-computer:~/Folder$ python dungeon.py 25 25 0.25 123456
+me@my-computer:~/Folder$ python dungeon.py --height 25 --width 25 --density 0.25 --seed 123456
 ********************************[][][][]**********
 ****************[][][][]****[][][]    []**********
 ********[][][][][]    []****[]        []**********

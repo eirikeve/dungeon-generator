@@ -13,6 +13,10 @@
 
 import random
 import sys
+import argparse
+import logging
+
+from utils import check_minimum_restricted_integer, check_positive, check_restricted_float, MINIMUM_VALUE
 
 ROOM = 0
 STONE = 1
@@ -299,17 +303,70 @@ def getDungeon(xlength, ylength, density, random_seed):
 
 # For running in a CLI
 if __name__ == "__main__":
-    if 2 < len(sys.argv):
-        height = int(sys.argv[1])
-        width = int(sys.argv[2])
-        density_val = 0.25
-        ran_seed = 0
-        if 3 < len(sys.argv):
-            density_val = float(sys.argv[3])
-            if 4 < len(sys.argv):
-                ran_seed = int(sys.argv[4])
-        printFinishedDungeon( getDungeon( height, width, density_val, ran_seed ), axis_enabled=False )
+
+    logger = logging.getLogger("dungeon")
+    logger.setLevel(logging.DEBUG)
+
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler('debug_dungeon.log')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # add the handlers to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
     
+    parser = argparse.ArgumentParser(add_help=True)
+
+    parser.add_argument("--height",
+                        dest="height",
+                        action="store",
+                        help="Height of dungeon, must be greater than {}".format(MINIMUM_VALUE),
+                        type=check_minimum_restricted_integer,
+                        required=True)
+    parser.add_argument("--width",
+                        dest="width",
+                        action="store",
+                        help="Width of dungeon, must be greater than {}".format(MINIMUM_VALUE),
+                        type=check_minimum_restricted_integer,
+                        required=True)
+    parser.add_argument("--density",
+                        dest="density",
+                        action="store",
+                        help="Density of rooms",
+                        type=check_restricted_float,
+                        required=False,
+                        default=0.25)
+
+    seed_group = parser.add_mutually_exclusive_group()
+    seed_group.add_argument("--seed",
+                        dest="seed",
+                        action="store",
+                        help="Which seed to use for generating dungeon",
+                        type=check_positive,
+                        required=False,
+                        default=0)
+    seed_group.add_argument("--random",
+                        dest="random_seed",
+                        action="store_true",
+                        help="Generate dungeon with random seed",
+                        required= False)
+
+
+    args, args_left = parser.parse_known_args()
+
+    if args_left:
+        logger.warning("Unknown arguments left from parsing: %s" % " ".join(args_left))
+    
+    if args.random_seed:
+        seed = random.randint(0, sys.maxsize)
+        logger.info("Random seed for generation: %s" % seed)
     else:
-        print("Error! Run as: python dungeon.py height width [density 0 <= float <= 1] [seed int]"
-        ,"\nMinimum size 5x5")
+        seed = args.seed
+
+    printFinishedDungeon( getDungeon(args.height, args.width, args.density, seed), axis_enabled=False )
